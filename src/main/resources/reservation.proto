@@ -1,0 +1,73 @@
+syntax = "proto3";
+option java_package = "ma.projet.grpc.stubs";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";  // Pour la gestion des dates
+import "google/protobuf/empty.proto";
+
+// Message pour le Client
+message Client {
+  int64 id = 1;              // ID du client
+  string nom = 2;            // Nom du client
+  string prenom = 3;         // Prénom du client
+  string email = 4;          // Email du client
+  string telephone = 5;      // Téléphone du client
+}
+
+// Message pour la Chambre
+message Chambre {
+  int64 id = 1;              // ID de la chambre
+  string type = 2;           // Type de chambre (Standard, Deluxe, etc.)
+  float prix = 3;            // Prix de la chambre
+  bool disponible = 4;       // Disponibilité de la chambre
+}
+
+// Message pour la réservation
+message Reservation {
+  int64 id = 1;                // ID de la réservation
+  Client client = 2;            // Le client qui effectue la réservation
+  Chambre chambre = 3;          // La chambre réservée
+  google.protobuf.Timestamp dateDebut = 4;  // Date de début de la réservation
+  google.protobuf.Timestamp dateFin = 5;    // Date de fin de la réservation
+  string preferences = 6;      // Préférences du client
+}
+
+// Requête pour obtenir toutes les réservations
+message GetReservationsRequest {}
+
+// Réponse pour obtenir toutes les réservations
+message GetReservationsResponse {
+  repeated Reservation reservations = 1;  // Liste des réservations
+}
+
+// Requête pour obtenir une réservation par ID
+message GetReservationRequest {
+  int64 id = 1;  // ID de la réservation
+}
+
+// Réponse pour obtenir une réservation par ID
+message GetReservationResponse {
+  Reservation reservation = 1;  // Détails de la réservation
+}
+
+// Requête pour créer une réservation
+message CreateReservationRequest {
+  int64 clientId = 1;        // ID du client
+  int64 chambreId = 2;       // ID de la chambre
+  string dateDebut = 3;      // Date de début au format YYYY-MM-DD
+  string dateFin = 4;        // Date de fin au format YYYY-MM-DD
+  string preferences = 5;    // Préférences du client
+}
+
+// Réponse pour créer une réservation
+message CreateReservationResponse {
+  Reservation reservation = 1;  // Détails de la réservation créée
+}
+
+// Service gRPC pour gérer les réservations
+service ReservationService {
+  rpc GetReservations(GetReservationsRequest) returns (GetReservationsResponse);  // Obtenir toutes les réservations
+  rpc GetReservation(GetReservationRequest) returns (GetReservationResponse);      // Obtenir une réservation par ID
+  rpc CreateReservation(CreateReservationRequest) returns (CreateReservationResponse); // Créer une réservation
+  rpc DeleteReservation(GetReservationRequest) returns (google.protobuf.Empty);      // Supprimer une réservation
+}
